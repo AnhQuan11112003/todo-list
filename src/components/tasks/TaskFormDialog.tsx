@@ -71,18 +71,20 @@ function TaskFormInner({ taskToEdit, onSubmit, onCancel }: InnerFormProps) {
   return (
     <form onSubmit={handleSubmit}>
       <DialogHeader>
-        <DialogTitle>{isEditing ? 'Edit Task' : 'Create New Task'}</DialogTitle>
-        <DialogDescription>
+        <DialogTitle className="text-base font-bold sm:text-lg">
+          {isEditing ? 'Edit Task' : 'Create New Task'}
+        </DialogTitle>
+        <DialogDescription className="text-xs sm:text-sm">
           {isEditing
             ? 'Update your task details, deadline, and notification reminders.'
             : 'Add a new task to your list. Set due dates and reminders.'}
         </DialogDescription>
       </DialogHeader>
 
-      <div className="grid max-h-[70vh] gap-4 overflow-y-auto py-4 pr-1">
+      <div className="grid max-h-[65vh] gap-3 overflow-y-auto py-3 pr-1 sm:gap-4 sm:py-4">
         {/* Title input */}
-        <div className="grid gap-2">
-          <label htmlFor="task-title" className="text-foreground text-sm font-medium">
+        <div className="grid gap-1.5 sm:gap-2">
+          <label htmlFor="task-title" className="text-foreground text-xs font-medium sm:text-sm">
             Title <span className="text-rose-500">*</span>
           </label>
           <Input
@@ -93,20 +95,23 @@ function TaskFormInner({ taskToEdit, onSubmit, onCancel }: InnerFormProps) {
               setTitle(e.target.value);
               if (titleError) setTitleError(null);
             }}
-            className={titleError ? 'border-rose-500 focus-visible:ring-rose-500' : ''}
+            className={`text-xs sm:text-sm ${titleError ? 'border-rose-500 focus-visible:ring-rose-500' : ''}`}
             autoFocus
           />
           {titleError && (
             <div className="flex items-center gap-1 text-xs font-medium text-rose-500">
-              <AlertCircle className="h-3.5 w-3.5" />
+              <AlertCircle className="h-3.5 w-3.5 shrink-0" />
               <span>{titleError}</span>
             </div>
           )}
         </div>
 
         {/* Description textarea */}
-        <div className="grid gap-2">
-          <label htmlFor="task-description" className="text-foreground text-sm font-medium">
+        <div className="grid gap-1.5 sm:gap-2">
+          <label
+            htmlFor="task-description"
+            className="text-foreground text-xs font-medium sm:text-sm"
+          >
             Description
           </label>
           <Textarea
@@ -115,20 +120,21 @@ function TaskFormInner({ taskToEdit, onSubmit, onCancel }: InnerFormProps) {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={3}
+            className="text-xs sm:text-sm"
           />
         </div>
 
         {/* Status & Priority selects */}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div className="grid gap-2">
-            <label htmlFor="task-status" className="text-foreground text-sm font-medium">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
+          <div className="grid gap-1.5 sm:gap-2">
+            <label htmlFor="task-status" className="text-foreground text-xs font-medium sm:text-sm">
               Status
             </label>
             <Select value={status} onValueChange={(val) => setStatus(val as TaskStatus)}>
-              <SelectTrigger id="task-status">
+              <SelectTrigger id="task-status" className="text-xs sm:text-sm">
                 <SelectValue placeholder="Select status" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="z-[100]">
                 <SelectItem value="todo">To Do</SelectItem>
                 <SelectItem value="in-progress">In Progress</SelectItem>
                 <SelectItem value="completed">Completed</SelectItem>
@@ -136,15 +142,18 @@ function TaskFormInner({ taskToEdit, onSubmit, onCancel }: InnerFormProps) {
             </Select>
           </div>
 
-          <div className="grid gap-2">
-            <label htmlFor="task-priority" className="text-foreground text-sm font-medium">
+          <div className="grid gap-1.5 sm:gap-2">
+            <label
+              htmlFor="task-priority"
+              className="text-foreground text-xs font-medium sm:text-sm"
+            >
               Priority
             </label>
             <Select value={priority} onValueChange={(val) => setPriority(val as TaskPriority)}>
-              <SelectTrigger id="task-priority">
+              <SelectTrigger id="task-priority" className="text-xs sm:text-sm">
                 <SelectValue placeholder="Select priority" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="z-[100]">
                 <SelectItem value="low">Low</SelectItem>
                 <SelectItem value="medium">Medium</SelectItem>
                 <SelectItem value="high">High</SelectItem>
@@ -154,13 +163,13 @@ function TaskFormInner({ taskToEdit, onSubmit, onCancel }: InnerFormProps) {
         </div>
 
         {/* Due Date & Reminder selects */}
-        <div className="border-border/60 grid grid-cols-1 gap-4 border-t pt-2 sm:grid-cols-2">
-          <div className="grid gap-2">
+        <div className="border-border/60 grid grid-cols-1 gap-3 border-t pt-2 sm:grid-cols-2 sm:gap-4">
+          <div className="grid gap-1.5 sm:gap-2">
             <label
               htmlFor="task-duedate"
-              className="text-foreground flex items-center gap-1.5 text-sm font-medium"
+              className="text-foreground flex items-center gap-1.5 text-xs font-medium sm:text-sm"
             >
-              <Calendar className="text-primary h-3.5 w-3.5" />
+              <Calendar className="text-primary h-3.5 w-3.5 shrink-0" />
               Due Date &amp; Time
             </label>
             <Input
@@ -168,15 +177,16 @@ function TaskFormInner({ taskToEdit, onSubmit, onCancel }: InnerFormProps) {
               type="datetime-local"
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
+              className="text-xs sm:text-sm"
             />
           </div>
 
-          <div className="grid gap-2">
+          <div className="grid gap-1.5 sm:gap-2">
             <label
               htmlFor="task-reminder"
-              className="text-foreground flex items-center gap-1.5 text-sm font-medium"
+              className="text-foreground flex items-center gap-1.5 text-xs font-medium sm:text-sm"
             >
-              <Bell className="h-3.5 w-3.5 text-amber-500" />
+              <Bell className="h-3.5 w-3.5 shrink-0 text-amber-500" />
               Web Push Reminder
             </label>
             <Select
@@ -184,12 +194,12 @@ function TaskFormInner({ taskToEdit, onSubmit, onCancel }: InnerFormProps) {
               onValueChange={(val) => setReminderOffset(val as ReminderOffset)}
               disabled={!dueDate}
             >
-              <SelectTrigger id="task-reminder">
+              <SelectTrigger id="task-reminder" className="text-xs sm:text-sm">
                 <SelectValue
                   placeholder={dueDate ? 'Select reminder time' : 'Set due date first'}
                 />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="z-[100]">
                 <SelectItem value="none">No reminder</SelectItem>
                 <SelectItem value="10m">10 minutes before</SelectItem>
                 <SelectItem value="30m">30 minutes before</SelectItem>
@@ -202,10 +212,12 @@ function TaskFormInner({ taskToEdit, onSubmit, onCancel }: InnerFormProps) {
       </div>
 
       <DialogFooter className="mt-4 gap-2 sm:gap-0">
-        <Button type="button" variant="outline" onClick={onCancel}>
+        <Button type="button" variant="outline" onClick={onCancel} className="text-xs sm:text-sm">
           Cancel
         </Button>
-        <Button type="submit">{isEditing ? 'Save Changes' : 'Create Task'}</Button>
+        <Button type="submit" className="text-xs sm:text-sm">
+          {isEditing ? 'Save Changes' : 'Create Task'}
+        </Button>
       </DialogFooter>
     </form>
   );
@@ -214,7 +226,7 @@ function TaskFormInner({ taskToEdit, onSubmit, onCancel }: InnerFormProps) {
 export function TaskFormDialog({ open, onOpenChange, onSubmit, taskToEdit }: TaskFormDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="glass-card rounded-3xl border-white/50 bg-white/75 p-6 shadow-2xl backdrop-blur-2xl sm:max-w-[520px] dark:border-white/15 dark:bg-slate-900/75">
+      <DialogContent className="glass-card max-h-[92vh] w-[94vw] max-w-[520px] overflow-y-auto rounded-2xl border-white/50 bg-white/90 p-4 shadow-2xl backdrop-blur-2xl sm:rounded-3xl sm:p-6 dark:border-white/15 dark:bg-slate-900/90">
         {open && (
           <TaskFormInner
             key={taskToEdit ? taskToEdit.id : 'new-task'}

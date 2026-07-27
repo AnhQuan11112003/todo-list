@@ -118,19 +118,19 @@ export function TaskCard({
   > = {
     todo: {
       label: 'To Do',
-      icon: <CircleAlert className="mr-1 h-3 w-3 text-slate-500" />,
+      icon: <CircleAlert className="mr-1 h-3 w-3 shrink-0 text-slate-500" />,
       className:
         'bg-slate-500/10 text-slate-700 dark:text-slate-300 border-slate-400/20 backdrop-blur-md',
     },
     'in-progress': {
       label: 'In Progress',
-      icon: <Clock className="mr-1 h-3 w-3 text-indigo-500" />,
+      icon: <Clock className="mr-1 h-3 w-3 shrink-0 text-indigo-500" />,
       className:
         'bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border-indigo-500/30 backdrop-blur-md font-medium',
     },
     completed: {
       label: 'Completed',
-      icon: <CheckCircle2 className="mr-1 h-3 w-3 text-emerald-500" />,
+      icon: <CheckCircle2 className="mr-1 h-3 w-3 shrink-0 text-emerald-500" />,
       className:
         'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30 backdrop-blur-md font-medium',
     },
@@ -141,13 +141,13 @@ export function TaskCard({
 
   return (
     <div
-      className={`glass-card glass-bubble flex h-full flex-col justify-between space-y-4 rounded-3xl p-5 transition-all duration-300 ${
+      className={`glass-card glass-bubble flex h-full flex-col justify-between space-y-4 rounded-2xl p-4 transition-all duration-300 sm:rounded-3xl sm:p-5 ${
         isCompleted ? 'bg-white/30 opacity-70 dark:bg-slate-900/30' : ''
       }`}
     >
       {/* Header section with Checkbox, Title, and Actions dropdown */}
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex min-w-0 flex-1 items-start gap-3">
+      <div className="flex items-start justify-between gap-2.5 sm:gap-3">
+        <div className="flex min-w-0 flex-1 items-start gap-2.5 sm:gap-3">
           <div className="pt-0.5">
             <Checkbox
               checked={isCompleted}
@@ -159,7 +159,7 @@ export function TaskCard({
           <div className="min-w-0 flex-1">
             <h4
               onClick={() => onToggleStatus(task.id)}
-              className={`cursor-pointer truncate text-base leading-snug font-bold tracking-tight transition-colors select-none ${
+              className={`line-clamp-2 cursor-pointer text-sm leading-snug font-bold tracking-tight break-words transition-colors select-none sm:text-base ${
                 isCompleted
                   ? 'text-muted-foreground line-through'
                   : 'text-foreground hover:text-indigo-600 dark:hover:text-indigo-400'
@@ -168,7 +168,7 @@ export function TaskCard({
               {task.title}
             </h4>
             {task.description && (
-              <p className="text-muted-foreground mt-1 line-clamp-2 text-sm leading-relaxed">
+              <p className="text-muted-foreground mt-1 line-clamp-3 text-xs leading-relaxed break-words sm:text-sm">
                 {task.description}
               </p>
             )}
@@ -191,7 +191,7 @@ export function TaskCard({
           />
           <DropdownMenuContent
             align="end"
-            className="w-48 rounded-2xl border border-white/60 bg-white/95 p-1.5 shadow-2xl backdrop-blur-3xl dark:border-white/20 dark:bg-slate-900/95"
+            className="z-50 w-48 rounded-2xl border border-white/60 bg-white/95 p-1.5 shadow-2xl backdrop-blur-3xl dark:border-white/20 dark:bg-slate-900/95"
           >
             <DropdownMenuGroup>
               <DropdownMenuLabel className="text-muted-foreground text-xs">
@@ -240,16 +240,16 @@ export function TaskCard({
 
       {/* Due Date & Web Push Reminder Info (if set) */}
       {task.dueDate && (
-        <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-white/50 bg-white/40 p-2.5 text-xs backdrop-blur-md dark:border-white/10 dark:bg-white/5">
-          <div className="text-foreground flex items-center gap-1.5 font-medium">
-            <Calendar className="h-3.5 w-3.5 text-indigo-500" />
-            <span>Due: {formatDate(task.dueDate)}</span>
+        <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-white/50 bg-white/40 p-2 text-xs backdrop-blur-md sm:rounded-2xl sm:p-2.5 dark:border-white/10 dark:bg-white/5">
+          <div className="text-foreground flex min-w-0 items-center gap-1.5 truncate font-medium">
+            <Calendar className="h-3.5 w-3.5 shrink-0 text-indigo-500" />
+            <span className="truncate">Due: {formatDate(task.dueDate)}</span>
           </div>
 
           {isOverdue && (
             <Badge
               variant="destructive"
-              className="flex h-5 items-center gap-1 rounded-full px-2 py-0 text-[10px] shadow-sm"
+              className="flex h-5 shrink-0 items-center gap-1 rounded-full px-2 py-0 text-[10px] shadow-sm"
             >
               <AlertTriangle className="h-3 w-3" />
               Overdue
@@ -257,7 +257,7 @@ export function TaskCard({
           )}
 
           {task.reminderOffset && task.reminderOffset !== 'none' && (
-            <div className="flex items-center gap-1 font-semibold text-amber-600 dark:text-amber-400">
+            <div className="flex shrink-0 items-center gap-1 text-[11px] font-semibold text-amber-600 sm:text-xs dark:text-amber-400">
               <Bell className="h-3 w-3" />
               <span>{getReminderLabel(task.reminderOffset)}</span>
             </div>
@@ -267,23 +267,23 @@ export function TaskCard({
 
       {/* Footer section with Badges and Creation date */}
       <div className="flex flex-wrap items-center justify-between gap-2 border-t border-white/30 pt-3 dark:border-white/10">
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
           <Badge
             variant="outline"
-            className={`rounded-full px-2.5 py-0.5 text-xs ${currentStatus.className}`}
+            className={`rounded-full px-2 py-0.5 text-[11px] sm:px-2.5 sm:text-xs ${currentStatus.className}`}
           >
             {currentStatus.icon}
             {currentStatus.label}
           </Badge>
           <Badge
             variant="outline"
-            className={`rounded-full px-2 py-0.5 text-xs ${currentPriority.className}`}
+            className={`rounded-full px-2 py-0.5 text-[11px] sm:text-xs ${currentPriority.className}`}
           >
             {currentPriority.label}
           </Badge>
         </div>
 
-        <div className="text-muted-foreground ml-auto flex items-center gap-1 text-xs font-medium">
+        <div className="text-muted-foreground ml-auto flex shrink-0 items-center gap-1 text-[11px] font-medium sm:text-xs">
           <span>Created {new Date(task.createdAt).toLocaleDateString()}</span>
         </div>
       </div>

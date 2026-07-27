@@ -189,7 +189,10 @@ export function TaskCard({
               </Button>
             }
           />
-          <DropdownMenuContent align="end" className="glass-card w-48 rounded-2xl p-1.5 shadow-2xl">
+          <DropdownMenuContent
+            align="end"
+            className="w-48 rounded-2xl border border-white/60 bg-white/95 p-1.5 shadow-2xl backdrop-blur-3xl dark:border-white/20 dark:bg-slate-900/95"
+          >
             <DropdownMenuGroup>
               <DropdownMenuLabel className="text-muted-foreground text-xs">
                 Task Actions

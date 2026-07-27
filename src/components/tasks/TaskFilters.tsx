@@ -29,18 +29,18 @@ export function TaskFilters({ filters, setFilters, resetFilters }: TaskFiltersPr
       <div className="flex flex-col items-stretch justify-between gap-3 sm:flex-row sm:items-center">
         {/* Search Bar */}
         <div className="relative flex-1">
-          <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+          <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2" />
           <Input
             type="text"
             placeholder="Search tasks by title or description..."
             value={filters.search}
             onChange={(e) => setFilters((prev) => ({ ...prev, search: e.target.value }))}
-            className="pr-9 pl-9"
+            className="glass-card rounded-full border-white/60 bg-white/50 pr-10 pl-10 focus:bg-white/80 dark:border-white/10 dark:bg-slate-900/50"
           />
           {filters.search && (
             <button
               onClick={() => setFilters((prev) => ({ ...prev, search: '' }))}
-              className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2 transition-colors"
+              className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3.5 -translate-y-1/2 transition-colors"
               aria-label="Clear search input"
             >
               <X className="h-4 w-4" />
@@ -56,17 +56,25 @@ export function TaskFilters({ filters, setFilters, resetFilters }: TaskFiltersPr
               setFilters((prev) => ({ ...prev, priority: val as TaskPriority | 'all' }))
             }
           >
-            <SelectTrigger className="w-full sm:w-[170px]">
+            <SelectTrigger className="glass-card w-full rounded-full border-white/60 bg-white/50 sm:w-[170px] dark:border-white/10 dark:bg-slate-900/50">
               <div className="flex items-center gap-2">
                 <Filter className="text-muted-foreground h-3.5 w-3.5" />
                 <SelectValue placeholder="All Priorities" />
               </div>
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Priorities</SelectItem>
-              <SelectItem value="low">Low Priority</SelectItem>
-              <SelectItem value="medium">Medium Priority</SelectItem>
-              <SelectItem value="high">High Priority</SelectItem>
+            <SelectContent className="glass-card rounded-2xl p-1 shadow-2xl">
+              <SelectItem value="all" className="rounded-xl">
+                All Priorities
+              </SelectItem>
+              <SelectItem value="low" className="rounded-xl">
+                Low Priority
+              </SelectItem>
+              <SelectItem value="medium" className="rounded-xl">
+                Medium Priority
+              </SelectItem>
+              <SelectItem value="high" className="rounded-xl">
+                High Priority
+              </SelectItem>
             </SelectContent>
           </Select>
 
@@ -75,7 +83,7 @@ export function TaskFilters({ filters, setFilters, resetFilters }: TaskFiltersPr
               variant="ghost"
               size="sm"
               onClick={resetFilters}
-              className="text-muted-foreground hover:text-foreground flex items-center gap-1.5"
+              className="glass-pill text-muted-foreground hover:text-foreground gap-1.5 px-3"
             >
               <RotateCcw className="h-3.5 w-3.5" />
               <span className="hidden sm:inline">Reset</span>
@@ -93,11 +101,31 @@ export function TaskFilters({ filters, setFilters, resetFilters }: TaskFiltersPr
           }
           className="w-full sm:w-auto"
         >
-          <TabsList className="grid w-full min-w-[320px] grid-cols-4 sm:w-auto">
-            <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="todo">To Do</TabsTrigger>
-            <TabsTrigger value="in-progress">In Progress</TabsTrigger>
-            <TabsTrigger value="completed">Completed</TabsTrigger>
+          <TabsList className="glass-card grid w-full min-w-[340px] grid-cols-4 rounded-full p-1 sm:w-auto">
+            <TabsTrigger
+              value="all"
+              className="rounded-full text-xs font-semibold data-[state=active]:bg-white data-[state=active]:shadow-md dark:data-[state=active]:bg-slate-800"
+            >
+              All
+            </TabsTrigger>
+            <TabsTrigger
+              value="todo"
+              className="rounded-full text-xs font-semibold data-[state=active]:bg-white data-[state=active]:shadow-md dark:data-[state=active]:bg-slate-800"
+            >
+              To Do
+            </TabsTrigger>
+            <TabsTrigger
+              value="in-progress"
+              className="rounded-full text-xs font-semibold data-[state=active]:bg-white data-[state=active]:shadow-md dark:data-[state=active]:bg-slate-800"
+            >
+              In Progress
+            </TabsTrigger>
+            <TabsTrigger
+              value="completed"
+              className="rounded-full text-xs font-semibold data-[state=active]:bg-white data-[state=active]:shadow-md dark:data-[state=active]:bg-slate-800"
+            >
+              Completed
+            </TabsTrigger>
           </TabsList>
         </Tabs>
       </div>

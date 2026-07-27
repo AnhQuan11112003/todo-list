@@ -214,7 +214,7 @@ function TaskFormInner({ taskToEdit, onSubmit, onCancel }: InnerFormProps) {
 export function TaskFormDialog({ open, onOpenChange, onSubmit, taskToEdit }: TaskFormDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[520px]">
+      <DialogContent className="glass-card rounded-3xl border-white/50 bg-white/75 p-6 shadow-2xl backdrop-blur-2xl sm:max-w-[520px] dark:border-white/15 dark:bg-slate-900/75">
         {open && (
           <TaskFormInner
             key={taskToEdit ? taskToEdit.id : 'new-task'}

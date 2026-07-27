@@ -62,7 +62,7 @@ export function TaskFilters({ filters, setFilters, resetFilters }: TaskFiltersPr
                 <SelectValue placeholder="All Priorities" />
               </div>
             </SelectTrigger>
-            <SelectContent className="glass-card z-50 rounded-2xl p-1 shadow-2xl">
+            <SelectContent className="z-50 min-w-40 rounded-2xl border border-white/60 bg-white/95 p-1.5 shadow-2xl backdrop-blur-3xl dark:border-white/20 dark:bg-slate-900/95">
               <SelectItem value="all" className="rounded-xl text-xs sm:text-sm">
                 All Priorities
               </SelectItem>

@@ -43,11 +43,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="vi" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
-      <body className="bg-background text-foreground flex min-h-full flex-col select-none touch-manipulation">
+    <html lang="vi" className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body className="bg-background text-foreground flex min-h-screen flex-col select-none touch-manipulation">
         {children}
         <Toaster position="top-center" richColors />
       </body>
     </html>
+
   );
 }

@@ -351,10 +351,9 @@ export default function Home() {
       {/* Floating Mobile Bottom Navigation Bar */}
       <MobileBottomNav
         onOpenCreate={handleOpenCreate}
-        onOpenManageCategories={() => setIsManageOpen(true)}
-        onOpenAuth={() => setIsAuthOpen(true)}
         user={user}
       />
+
     </div>
   );
 }

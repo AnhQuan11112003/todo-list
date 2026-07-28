@@ -11,7 +11,9 @@ import { DeleteConfirmDialog } from '@/components/tasks/DeleteConfirmDialog';
 import { SnoozeDialog } from '@/components/tasks/SnoozeDialog';
 import { ManageCategoriesDialog } from '@/components/tasks/ManageCategoriesDialog';
 import { AuthDialog } from '@/components/auth/AuthDialog';
+import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { EmptyState } from '@/components/tasks/EmptyState';
+
 import { Button } from '@/components/ui/button';
 import {
   CheckSquare,
@@ -253,7 +255,8 @@ export default function Home() {
       </header>
 
       {/* Main Container */}
-      <main className="relative z-10 mx-auto w-full max-w-7xl flex-1 space-y-8 px-4 py-8 sm:px-6 lg:px-8">
+      <main className="relative z-10 mx-auto w-full max-w-7xl flex-1 space-y-8 px-4 py-8 pb-24 sm:pb-8 sm:px-6 lg:px-8">
+
         {/* Stats Overview */}
         <section aria-labelledby="stats-heading">
           <h2 id="stats-heading" className="sr-only">
@@ -369,6 +372,15 @@ export default function Home() {
         open={isAuthOpen}
         onOpenChange={setIsAuthOpen}
       />
+
+      {/* Floating Mobile Bottom Navigation Bar */}
+      <MobileBottomNav
+        onOpenCreate={handleOpenCreate}
+        onOpenManageCategories={() => setIsManageOpen(true)}
+        onOpenAuth={() => setIsAuthOpen(true)}
+        user={user}
+      />
     </div>
   );
 }
+

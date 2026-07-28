@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { Toaster } from '@/components/ui/sonner';
@@ -13,10 +13,28 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
+export const viewport: Viewport = {
+  themeColor: '#6366f1',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
+};
+
 export const metadata: Metadata = {
-  title: 'Todo Task Manager | Next.js & shadcn/ui',
+  title: 'TaskFlow | iOS VisionOS Task Manager',
   description:
-    'A modern, full-featured Task Management & Todo List Application built with Next.js App Router, TypeScript, Tailwind CSS, and shadcn/ui.',
+    'Modern iOS VisionOS Glassmorphism Task Manager built with Next.js, Tailwind CSS, and Supabase Cloud.',
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'TaskFlow',
+  },
+  formatDetection: {
+    telephone: false,
+  },
 };
 
 export default function RootLayout({
@@ -25,10 +43,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
-      <body className="bg-background text-foreground flex min-h-full flex-col">
+    <html lang="vi" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
+      <body className="bg-background text-foreground flex min-h-full flex-col select-none touch-manipulation">
         {children}
-        <Toaster position="top-right" richColors />
+        <Toaster position="top-center" richColors />
       </body>
     </html>
   );

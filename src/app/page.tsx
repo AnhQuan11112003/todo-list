@@ -150,8 +150,8 @@ export default function Home() {
 
 
 
-      {/* Main Container */}
-      <main className="relative z-10 mx-auto w-full max-w-7xl flex-1 space-y-8 px-4 py-8 pb-24 sm:pb-8 sm:px-6 lg:px-8">
+      <main className="relative z-10 mx-auto w-full max-w-7xl flex-1 space-y-8 px-4 pt-20 sm:pt-24 py-8 pb-24 sm:pb-8 sm:px-6 lg:px-8">
+
 
         {/* Stats Overview */}
         <section aria-labelledby="stats-heading">

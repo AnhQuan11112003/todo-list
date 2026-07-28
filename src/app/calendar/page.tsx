@@ -111,7 +111,8 @@ export default function CalendarPage() {
         signOut={signOut}
       />
 
-      <main className="relative z-10 mx-auto w-full max-w-7xl flex-1 space-y-6 px-4 py-6 pb-24 sm:pb-8 sm:px-6 lg:px-8">
+      <main className="relative z-10 mx-auto w-full max-w-7xl flex-1 space-y-6 px-4 pt-20 sm:pt-24 py-6 pb-24 sm:pb-8 sm:px-6 lg:px-8">
+
         {/* Navigation Breadcrumb */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">

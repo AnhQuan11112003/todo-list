@@ -21,7 +21,8 @@ export function Header({
   onOpenAuth,
 }: HeaderProps) {
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-white/40 bg-white/80 backdrop-blur-2xl shadow-sm dark:border-white/10 dark:bg-slate-950/85 pt-[env(safe-area-inset-top,0px)]">
+    <header className="fixed top-0 inset-x-0 z-50 w-full border-b border-white/40 bg-white/85 backdrop-blur-2xl shadow-sm dark:border-white/10 dark:bg-slate-950/85 pt-[env(safe-area-inset-top,0px)]">
+
 
 
       <div className="mx-auto flex h-14 sm:h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">

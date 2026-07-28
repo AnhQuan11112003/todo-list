@@ -1,10 +1,11 @@
 'use client';
 
 import { useSyncExternalStore } from 'react';
-import { Task, TaskPriority, TaskStatus } from '@/types/task';
+import { SnoozeDuration, Task, TaskPriority, TaskStatus } from '@/types/task';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { TruncatedText } from '@/components/ui/truncated-text';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,6 +13,9 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
@@ -24,6 +28,8 @@ import {
   CircleAlert,
   Bell,
   AlertTriangle,
+  AlarmClock,
+  BellOff,
 } from 'lucide-react';
 import { getReminderLabel } from '@/lib/notifications';
 
@@ -33,6 +39,9 @@ interface TaskCardProps {
   onStatusChange: (id: string, newStatus: TaskStatus) => void;
   onEdit: (task: Task) => void;
   onDelete: (task: Task) => void;
+  onSnooze?: (taskId: string, duration: SnoozeDuration | number) => void;
+  onCancelSnooze?: (taskId: string) => void;
+  onOpenSnoozeDialog?: (task: Task) => void;
 }
 
 // Stable current time store for useSyncExternalStore
@@ -70,12 +79,20 @@ export function TaskCard({
   onStatusChange,
   onEdit,
   onDelete,
+  onSnooze,
+  onCancelSnooze,
+  onOpenSnoozeDialog,
 }: TaskCardProps) {
   const now = useSyncExternalStore(subscribeTime, getClientNow, getServerNow);
   const isCompleted = task.status === 'completed';
 
   const isOverdue =
     now !== null && !isCompleted && task.dueDate ? new Date(task.dueDate).getTime() < now : false;
+
+  const isSnoozed =
+    now !== null &&
+    !isCompleted &&
+    task.snoozedUntil ? new Date(task.snoozedUntil).getTime() > now : false;
 
   // Format date cleanly
   const formatDate = (isoString: string) => {
@@ -84,6 +101,19 @@ export function TaskCard({
       return new Intl.DateTimeFormat('en-US', {
         month: 'short',
         day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      }).format(date);
+    } catch {
+      return isoString;
+    }
+  };
+
+  // Format time for snooze banner
+  const formatTime = (isoString: string) => {
+    try {
+      const date = new Date(isoString);
+      return new Intl.DateTimeFormat('en-US', {
         hour: '2-digit',
         minute: '2-digit',
       }).format(date);
@@ -168,12 +198,37 @@ export function TaskCard({
               {task.title}
             </h4>
             {task.description && (
-              <p className="text-muted-foreground mt-1 line-clamp-3 text-xs leading-relaxed break-words sm:text-sm">
-                {task.description}
-              </p>
+              <div className="mt-1">
+                <TruncatedText text={task.description} maxLength={100} />
+              </div>
+            )}
+
+            {/* Project & Tags Row */}
+            {(task.project || (task.tags && task.tags.length > 0)) && (
+              <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                {task.project && (
+                  <Badge
+                    variant="outline"
+                    className="rounded-lg border-indigo-500/30 bg-indigo-500/10 px-2 py-0.5 text-[11px] font-semibold text-indigo-700 backdrop-blur-md dark:text-indigo-300"
+                  >
+                    📁 {task.project}
+                  </Badge>
+                )}
+                {task.tags &&
+                  task.tags.map((tag) => (
+                    <Badge
+                      key={tag}
+                      variant="outline"
+                      className="rounded-lg border-purple-500/20 bg-purple-500/10 px-1.5 py-0.5 text-[10px] font-medium text-purple-700 backdrop-blur-md dark:text-purple-300"
+                    >
+                      #{tag}
+                    </Badge>
+                  ))}
+              </div>
             )}
           </div>
         </div>
+
 
         {/* Action Menu */}
         <DropdownMenu>
@@ -191,7 +246,7 @@ export function TaskCard({
           />
           <DropdownMenuContent
             align="end"
-            className="z-50 w-48 rounded-2xl border border-white/60 bg-white/95 p-1.5 shadow-2xl backdrop-blur-3xl dark:border-white/20 dark:bg-slate-900/95"
+            className="z-50 w-52 rounded-2xl border border-white/60 bg-white/95 p-1.5 shadow-2xl backdrop-blur-3xl dark:border-white/20 dark:bg-slate-900/95"
           >
             <DropdownMenuGroup>
               <DropdownMenuLabel className="text-muted-foreground text-xs">
@@ -203,6 +258,65 @@ export function TaskCard({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator className="bg-white/20 dark:bg-white/10" />
+
+            {/* Snooze Options */}
+            {!isCompleted && (
+              <>
+                <DropdownMenuGroup>
+                  <DropdownMenuLabel className="text-muted-foreground text-xs font-normal">
+                    Snooze Reminder
+                  </DropdownMenuLabel>
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger className="cursor-pointer rounded-xl">
+                      <AlarmClock className="text-amber-500 mr-2 h-4 w-4" />
+                      Snooze Notification
+                    </DropdownMenuSubTrigger>
+                    <DropdownMenuSubContent className="z-50 rounded-2xl border border-white/60 bg-white/95 p-1.5 shadow-2xl backdrop-blur-3xl dark:border-white/20 dark:bg-slate-900/95">
+                      <DropdownMenuItem onClick={() => onSnooze?.(task.id, '10m')} className="cursor-pointer rounded-xl">
+
+                        10 Minutes
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => onSnooze?.(task.id, '30m')} className="cursor-pointer rounded-xl">
+                        30 Minutes
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => onSnooze?.(task.id, '1h')} className="cursor-pointer rounded-xl">
+                        1 Hour
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => onSnooze?.(task.id, '2h')} className="cursor-pointer rounded-xl">
+                        2 Hours
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator className="bg-white/20 dark:bg-white/10" />
+                      <DropdownMenuItem onClick={() => onSnooze?.(task.id, 'tonight')} className="cursor-pointer rounded-xl">
+                        Tonight (8:00 PM)
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => onSnooze?.(task.id, 'tomorrow-morning')} className="cursor-pointer rounded-xl">
+                        Tomorrow Morning (9:00 AM)
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => onSnooze?.(task.id, 'tomorrow-afternoon')} className="cursor-pointer rounded-xl">
+                        Tomorrow Afternoon (2:00 PM)
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => onSnooze?.(task.id, 'next-week')} className="cursor-pointer rounded-xl">
+                        Next Week (Mon 9:00 AM)
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator className="bg-white/20 dark:bg-white/10" />
+                      <DropdownMenuItem onClick={() => onOpenSnoozeDialog?.(task)} className="cursor-pointer rounded-xl font-medium text-indigo-600 dark:text-indigo-400">
+                        Custom Snooze...
+                      </DropdownMenuItem>
+                    </DropdownMenuSubContent>
+                  </DropdownMenuSub>
+
+
+                  {task.snoozedUntil && (
+                    <DropdownMenuItem onClick={() => onCancelSnooze?.(task.id)} className="cursor-pointer rounded-xl text-amber-600 dark:text-amber-400">
+                      <BellOff className="mr-2 h-4 w-4" />
+                      Cancel Snooze
+                    </DropdownMenuItem>
+                  )}
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator className="bg-white/20 dark:bg-white/10" />
+              </>
+            )}
+
             <DropdownMenuGroup>
               <DropdownMenuLabel className="text-muted-foreground text-xs font-normal">
                 Change Status
@@ -238,6 +352,37 @@ export function TaskCard({
         </DropdownMenu>
       </div>
 
+      {/* Snoozed Banner (if snoozed active) */}
+      {isSnoozed && task.snoozedUntil && (
+        <div className="flex items-center justify-between gap-2 rounded-xl border border-amber-500/30 bg-amber-500/15 p-2 text-xs text-amber-700 dark:text-amber-300 backdrop-blur-md">
+          <div className="flex items-center gap-1.5 font-semibold truncate">
+            <AlarmClock className="h-3.5 w-3.5 shrink-0 animate-pulse text-amber-600 dark:text-amber-400" />
+            <span className="truncate">Snoozed until {formatTime(task.snoozedUntil)}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onOpenSnoozeDialog?.(task)}
+              className="h-6 rounded-lg px-2 text-[10px] font-bold text-amber-700 hover:bg-amber-500/20 dark:text-amber-300"
+            >
+              Change
+            </Button>
+            {onCancelSnooze && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => onCancelSnooze(task.id)}
+                className="h-6 rounded-lg px-2 text-[10px] font-bold text-rose-600 hover:bg-rose-500/20 dark:text-rose-400"
+                title="Cancel Snooze"
+              >
+                Cancel
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Due Date & Web Push Reminder Info (if set) */}
       {task.dueDate && (
         <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-white/50 bg-white/40 p-2 text-xs backdrop-blur-md sm:rounded-2xl sm:p-2.5 dark:border-white/10 dark:bg-white/5">
@@ -257,9 +402,19 @@ export function TaskCard({
           )}
 
           {task.reminderOffset && task.reminderOffset !== 'none' && (
-            <div className="flex shrink-0 items-center gap-1 text-[11px] font-semibold text-amber-600 sm:text-xs dark:text-amber-400">
+            <div className="flex shrink-0 items-center gap-1.5 text-[11px] font-semibold text-amber-600 sm:text-xs dark:text-amber-400">
               <Bell className="h-3 w-3" />
               <span>{getReminderLabel(task.reminderOffset)}</span>
+              {!isCompleted && !isSnoozed && onOpenSnoozeDialog && (
+                <button
+                  type="button"
+                  onClick={() => onOpenSnoozeDialog(task)}
+                  className="ml-1 rounded-md bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-bold transition-colors hover:bg-amber-500/25"
+                  title="Snooze reminder"
+                >
+                  Snooze 💤
+                </button>
+              )}
             </div>
           )}
         </div>
@@ -290,3 +445,4 @@ export function TaskCard({
     </div>
   );
 }
+

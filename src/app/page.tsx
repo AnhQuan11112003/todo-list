@@ -8,9 +8,24 @@ import { TaskFilters } from '@/components/tasks/TaskFilters';
 import { TaskCard } from '@/components/tasks/TaskCard';
 import { TaskFormDialog } from '@/components/tasks/TaskFormDialog';
 import { DeleteConfirmDialog } from '@/components/tasks/DeleteConfirmDialog';
+import { SnoozeDialog } from '@/components/tasks/SnoozeDialog';
+import { ManageCategoriesDialog } from '@/components/tasks/ManageCategoriesDialog';
+import { AuthDialog } from '@/components/auth/AuthDialog';
 import { EmptyState } from '@/components/tasks/EmptyState';
 import { Button } from '@/components/ui/button';
-import { CheckSquare, Plus, Loader2, Bell, BellRing, BellOff, Sparkles } from 'lucide-react';
+import {
+  CheckSquare,
+  Plus,
+  Loader2,
+  Bell,
+  BellRing,
+  BellOff,
+  Sparkles,
+  FolderKanban,
+  LogIn,
+  LogOut,
+  UserCheck,
+} from 'lucide-react';
 
 export default function Home() {
   const {
@@ -20,10 +35,21 @@ export default function Home() {
     filters,
     setFilters,
     resetFilters,
+    allProjects,
+    allTags,
+    addProject,
+    deleteProject,
+    addTag,
+    deleteTag,
     addTask,
     updateTask,
     deleteTask,
     toggleTaskStatus,
+    snoozeTask,
+    cancelSnooze,
+    user,
+    isAuthLoading,
+    signOut,
     isHydrated,
     notificationPermission,
     requestPermission,
@@ -36,6 +62,16 @@ export default function Home() {
   // Delete Dialog state
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState<Task | null>(null);
+
+  // Snooze Dialog state
+  const [isSnoozeOpen, setIsSnoozeOpen] = useState(false);
+  const [taskToSnooze, setTaskToSnooze] = useState<Task | null>(null);
+
+  // Manage Categories Dialog state
+  const [isManageOpen, setIsManageOpen] = useState(false);
+
+  // Auth Dialog state
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
 
   // Open dialog for creation
   const handleOpenCreate = () => {
@@ -53,6 +89,12 @@ export default function Home() {
   const handleOpenDelete = (task: Task) => {
     setTaskToDelete(task);
     setIsDeleteOpen(true);
+  };
+
+  // Open Snooze Dialog
+  const handleOpenSnooze = (task: Task) => {
+    setTaskToSnooze(task);
+    setIsSnoozeOpen(true);
   };
 
   // Handle Form Submission (Create or Edit)
@@ -79,7 +121,11 @@ export default function Home() {
   };
 
   const hasActiveFilters =
-    filters.search !== '' || filters.status !== 'all' || filters.priority !== 'all';
+    filters.search !== '' ||
+    filters.status !== 'all' ||
+    filters.priority !== 'all' ||
+    filters.project !== 'all' ||
+    filters.tag !== 'all';
 
   if (!isHydrated) {
     return (
@@ -112,51 +158,94 @@ export default function Home() {
                 <Sparkles className="h-4 w-4 animate-pulse text-amber-500" />
               </div>
               <p className="text-muted-foreground hidden text-xs sm:block">
-                iOS Bubble Glass Task Manager
+                iOS VisionOS Glassmorphism Edition &bull; Supabase Cloud
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-2.5">
+            {/* Supabase Auth Pill */}
+            {user ? (
+              <div className="flex items-center gap-1 sm:gap-2">
+                <div className="glass-pill hidden items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 md:flex dark:text-slate-200">
+                  <UserCheck className="h-3.5 w-3.5 text-emerald-500" />
+                  <span className="max-w-[140px] truncate">{user.email}</span>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={signOut}
+                  className="glass-pill gap-1 px-2.5 py-1.5 text-xs font-semibold text-rose-600 hover:bg-rose-500/10 dark:text-rose-400"
+                  title="Sign Out"
+                >
+                  <LogOut className="h-3.5 w-3.5 text-rose-500" />
+                  <span className="hidden sm:inline">Sign Out</span>
+                </Button>
+              </div>
+            ) : (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsAuthOpen(true)}
+                className="glass-pill gap-1 border-indigo-400/40 bg-indigo-500/10 px-2.5 py-1.5 text-xs font-semibold text-indigo-700 hover:bg-indigo-500/20 dark:text-indigo-300"
+                title="Sign In with Supabase Auth"
+              >
+                <LogIn className="h-3.5 w-3.5 text-indigo-500" />
+                <span>Sign In / Sync</span>
+              </Button>
+            )}
+
+            {/* Manage Projects & Tags Button */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsManageOpen(true)}
+              className="glass-pill hidden gap-1 px-2.5 py-1.5 text-xs font-semibold text-indigo-600 hover:bg-indigo-500/10 sm:flex sm:gap-1.5 sm:px-3.5 dark:text-indigo-400"
+              title="Manage Projects & Tags"
+            >
+              <FolderKanban className="h-3.5 w-3.5 text-indigo-500" />
+              <span>Categories</span>
+            </Button>
+
             {/* Notification Permission Toggle */}
             {notificationPermission === 'granted' ? (
               <Button
                 variant="ghost"
                 size="sm"
-                className="glass-pill gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-emerald-600 hover:bg-emerald-500/10 dark:text-emerald-400"
+                className="glass-pill gap-1 px-2.5 py-1.5 text-xs font-semibold text-emerald-600 hover:bg-emerald-500/10 sm:gap-1.5 sm:px-3.5 dark:text-emerald-400"
                 title="OS Push Notifications are Active"
               >
                 <Bell className="h-3.5 w-3.5 text-emerald-500" />
-                <span className="hidden md:inline">Push Active</span>
+                <span className="hidden sm:inline">Push Active</span>
               </Button>
             ) : notificationPermission === 'denied' ? (
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={requestPermission}
-                className="glass-pill gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-rose-600 hover:bg-rose-500/10 dark:text-rose-400"
+                className="glass-pill gap-1 px-2.5 py-1.5 text-xs font-semibold text-rose-600 hover:bg-rose-500/10 sm:gap-1.5 sm:px-3.5 dark:text-rose-400"
                 title="Notifications Blocked - Click to retry"
               >
                 <BellOff className="h-3.5 w-3.5 text-rose-500" />
-                <span className="hidden md:inline">Notifications Blocked</span>
+                <span className="hidden sm:inline">Blocked</span>
               </Button>
             ) : (
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={requestPermission}
-                className="glass-pill gap-1.5 border-amber-300/60 bg-amber-500/10 px-3.5 py-1.5 text-xs font-semibold text-amber-700 hover:bg-amber-500/20 dark:text-amber-300"
+                className="glass-pill gap-1 border-amber-300/60 bg-amber-500/10 px-2.5 py-1.5 text-xs font-semibold text-amber-700 hover:bg-amber-500/20 sm:gap-1.5 sm:px-3.5 dark:text-amber-300"
               >
                 <BellRing className="h-3.5 w-3.5 animate-bounce text-amber-500" />
-                <span>Enable Push Alerts</span>
+                <span className="hidden sm:inline">Alerts</span>
               </Button>
             )}
 
             <Button
               onClick={handleOpenCreate}
-              className="flex items-center gap-2 rounded-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 px-4 py-2 font-semibold text-white shadow-lg shadow-indigo-500/25 transition-all duration-300 hover:scale-105 hover:shadow-indigo-500/40 active:scale-95"
+              className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 px-3 py-1.5 text-xs font-semibold text-white shadow-lg shadow-indigo-500/25 transition-all duration-300 hover:scale-105 hover:shadow-indigo-500/40 active:scale-95 sm:gap-2 sm:px-4 sm:py-2 sm:text-sm"
             >
-              <Plus className="h-4 w-4 stroke-[3]" />
+              <Plus className="h-3.5 w-3.5 stroke-[3] sm:h-4 sm:w-4" />
               <span>New Task</span>
             </Button>
           </div>
@@ -177,9 +266,16 @@ export default function Home() {
         <section className="space-y-6" aria-labelledby="tasks-heading">
           <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
             <div>
-              <h2 id="tasks-heading" className="text-foreground text-2xl font-bold tracking-tight">
-                My Tasks
-              </h2>
+              <div className="flex items-center gap-2">
+                <h2 id="tasks-heading" className="text-foreground text-2xl font-bold tracking-tight">
+                  My Tasks
+                </h2>
+                {user && (
+                  <span className="rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
+                    ☁️ Supabase Synced
+                  </span>
+                )}
+              </div>
               <p className="text-muted-foreground text-sm">
                 Showing {filteredTasks.length} of {tasks.length} tasks
               </p>
@@ -187,7 +283,14 @@ export default function Home() {
           </div>
 
           {/* Filters Bar */}
-          <TaskFilters filters={filters} setFilters={setFilters} resetFilters={resetFilters} />
+          <TaskFilters
+            filters={filters}
+            setFilters={setFilters}
+            resetFilters={resetFilters}
+            allProjects={allProjects}
+            allTags={allTags}
+            onOpenManageCategories={() => setIsManageOpen(true)}
+          />
 
           {/* Task List / Grid */}
           {filteredTasks.length > 0 ? (
@@ -200,6 +303,9 @@ export default function Home() {
                   onStatusChange={handleStatusChange}
                   onEdit={handleOpenEdit}
                   onDelete={handleOpenDelete}
+                  onSnooze={snoozeTask}
+                  onCancelSnooze={cancelSnooze}
+                  onOpenSnoozeDialog={handleOpenSnooze}
                 />
               ))}
             </div>
@@ -216,7 +322,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="text-muted-foreground relative z-10 border-t border-white/20 bg-white/20 py-6 text-center text-xs backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/20">
         <div className="mx-auto max-w-7xl px-4">
-          TaskFlow &bull; iOS VisionOS Glassmorphism Edition &bull; Next.js &amp; Tailwind CSS
+          TaskFlow &bull; iOS VisionOS Glassmorphism Edition &bull; Next.js &amp; Supabase Cloud Database
         </div>
       </footer>
 
@@ -226,6 +332,8 @@ export default function Home() {
         onOpenChange={setIsFormOpen}
         onSubmit={handleFormSubmit}
         taskToEdit={taskToEdit}
+        allProjects={allProjects}
+        allTags={allTags}
       />
 
       {/* Delete Confirmation Dialog */}
@@ -234,6 +342,32 @@ export default function Home() {
         onOpenChange={setIsDeleteOpen}
         onConfirm={handleConfirmDelete}
         taskTitle={taskToDelete?.title}
+      />
+
+      {/* Snooze Dialog */}
+      <SnoozeDialog
+        open={isSnoozeOpen}
+        onOpenChange={setIsSnoozeOpen}
+        task={taskToSnooze}
+        onSnooze={snoozeTask}
+      />
+
+      {/* Manage Projects & Tags Dialog */}
+      <ManageCategoriesDialog
+        open={isManageOpen}
+        onOpenChange={setIsManageOpen}
+        allProjects={allProjects}
+        allTags={allTags}
+        onAddProject={addProject}
+        onDeleteProject={deleteProject}
+        onAddTag={addTag}
+        onDeleteTag={deleteTag}
+      />
+
+      {/* Supabase Auth Dialog */}
+      <AuthDialog
+        open={isAuthOpen}
+        onOpenChange={setIsAuthOpen}
       />
     </div>
   );

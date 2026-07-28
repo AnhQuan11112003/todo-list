@@ -5,6 +5,9 @@ const now = Date.now();
 const tomorrow = new Date(now + 24 * 3600000).toISOString().slice(0, 16);
 const nextWeek = new Date(now + 7 * 24 * 3600000).toISOString().slice(0, 16);
 
+export const INITIAL_PROJECTS = ['Work', 'Personal', 'Development', 'Design', 'Study'];
+export const INITIAL_TAGS = ['frontend', 'urgent', 'bug', 'feature', 'learning', 'ui-ux'];
+
 export const INITIAL_TASKS: Task[] = [
   {
     id: 'task-1',
@@ -13,6 +16,8 @@ export const INITIAL_TASKS: Task[] = [
       'Implement full CRUD functionality, shadcn/ui components, Web Push notifications, filters, search, and localStorage persistence.',
     status: 'in-progress',
     priority: 'high',
+    project: 'Development',
+    tags: ['frontend', 'feature', 'urgent'],
     dueDate: tomorrow,
     reminderOffset: '30m',
     reminderSent: false,
@@ -26,6 +31,8 @@ export const INITIAL_TASKS: Task[] = [
       'Ensure smooth experience on mobile, tablet, and desktop viewports with accessible components.',
     status: 'completed',
     priority: 'medium',
+    project: 'Design',
+    tags: ['ui-ux', 'frontend'],
     createdAt: new Date(now - 3600000 * 24 * 3).toISOString(),
     updatedAt: new Date(now - 3600000 * 24).toISOString(),
   },
@@ -36,6 +43,8 @@ export const INITIAL_TASKS: Task[] = [
       'Run npm run lint and npm run build to ensure zero errors or warnings before deployment.',
     status: 'todo',
     priority: 'low',
+    project: 'Work',
+    tags: ['feature'],
     dueDate: nextWeek,
     reminderOffset: '1d',
     reminderSent: false,
@@ -43,3 +52,4 @@ export const INITIAL_TASKS: Task[] = [
     updatedAt: new Date(now - 3600000 * 12).toISOString(),
   },
 ];
+

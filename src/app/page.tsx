@@ -149,23 +149,20 @@ export default function Home() {
 
       {/* Glassmorphic Floating Header */}
       <header className="sticky top-0 z-30 border-b border-white/40 bg-white/40 backdrop-blur-2xl dark:border-white/10 dark:bg-slate-950/40">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 text-white shadow-lg shadow-indigo-500/30">
-              <CheckSquare className="h-5 w-5" />
+        <div className="mx-auto flex h-14 sm:h-16 max-w-7xl items-center justify-center sm:justify-between px-4 sm:px-6 lg:px-8">
+          {/* Brand Logo - Centered on Mobile, Left on Desktop */}
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-2xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 text-white shadow-lg shadow-indigo-500/30">
+              <CheckSquare className="h-4 w-4 sm:h-5 sm:w-5" />
             </div>
-            <div>
-              <div className="flex items-center gap-1.5">
-                <h1 className="text-foreground text-lg font-extrabold tracking-tight">TaskFlow</h1>
-                <Sparkles className="h-4 w-4 animate-pulse text-amber-500" />
-              </div>
-              <p className="text-muted-foreground hidden text-xs sm:block">
-                iOS VisionOS Glassmorphism Edition &bull; Supabase Cloud
-              </p>
+            <div className="flex items-center gap-1.5">
+              <h1 className="text-foreground text-base sm:text-lg font-extrabold tracking-tight">TaskFlow</h1>
+              <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 animate-pulse text-amber-500" />
             </div>
           </div>
 
-          <div className="flex items-center gap-1.5 sm:gap-2.5">
+          {/* Header Action Controls (Desktop Only) */}
+          <div className="hidden sm:flex items-center gap-1.5 sm:gap-2.5">
             {/* Supabase Auth Pill */}
             {user ? (
               <div className="flex items-center gap-1 sm:gap-2">
@@ -253,6 +250,7 @@ export default function Home() {
           </div>
         </div>
       </header>
+
 
       {/* Main Container */}
       <main className="relative z-10 mx-auto w-full max-w-7xl flex-1 space-y-8 px-4 py-8 pb-24 sm:pb-8 sm:px-6 lg:px-8">

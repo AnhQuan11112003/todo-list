@@ -131,9 +131,12 @@ export default function Home() {
   return (
     <div className="bg-aurora text-foreground relative flex min-h-screen flex-col">
       {/* Decorative Ambient Glass Orbs */}
-      <div className="pointer-events-none absolute -top-32 -left-32 h-96 w-96 rounded-full bg-indigo-500/20 blur-3xl" />
-      <div className="pointer-events-none absolute top-1/3 -right-32 h-96 w-96 rounded-full bg-pink-500/20 blur-3xl" />
-      <div className="pointer-events-none absolute bottom-10 left-1/3 h-96 w-96 rounded-full bg-sky-500/20 blur-3xl" />
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-indigo-500/20 blur-3xl" />
+        <div className="absolute top-1/3 -right-32 h-96 w-96 rounded-full bg-pink-500/20 blur-3xl" />
+        <div className="absolute bottom-10 left-1/3 h-96 w-96 rounded-full bg-sky-500/20 blur-3xl" />
+      </div>
+
 
       {/* Sticky Glassmorphic Header */}
       <Header

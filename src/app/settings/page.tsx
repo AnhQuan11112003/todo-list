@@ -78,8 +78,11 @@ export default function SettingsPage() {
     <div className="bg-aurora text-foreground relative flex min-h-screen flex-col">
 
       {/* Ambient Glass Orbs */}
-      <div className="pointer-events-none absolute -top-32 -left-32 h-96 w-96 rounded-full bg-indigo-500/20 blur-3xl" />
-      <div className="pointer-events-none absolute top-1/3 -right-32 h-96 w-96 rounded-full bg-purple-500/20 blur-3xl" />
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-indigo-500/20 blur-3xl" />
+        <div className="absolute top-1/3 -right-32 h-96 w-96 rounded-full bg-purple-500/20 blur-3xl" />
+      </div>
+
 
       <Header
         notificationPermission={notificationPermission}

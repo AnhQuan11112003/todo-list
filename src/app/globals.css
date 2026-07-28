@@ -95,10 +95,12 @@
   * {
     @apply border-border outline-ring/50;
   }
+  html,
   body {
-    @apply bg-background text-foreground min-h-screen antialiased;
+    @apply bg-background text-foreground min-h-screen antialiased overflow-x-hidden max-w-full;
   }
 }
+
 
 @layer utilities {
   .bg-aurora {

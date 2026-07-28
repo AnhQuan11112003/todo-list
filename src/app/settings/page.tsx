@@ -4,16 +4,17 @@ import { useState } from 'react';
 import { useTasks } from '@/hooks/useTasks';
 import { Header } from '@/components/layout/Header';
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
+import { AuthDialog } from '@/components/auth/AuthDialog';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { useTheme } from 'next-themes';
-import { Settings as SettingsIcon, Moon, Sun, Monitor, Bell, UserCheck, LogOut, Download, Trash2, ArrowLeft, ShieldCheck } from 'lucide-react';
+import { Settings as SettingsIcon, Moon, Sun, Monitor, Bell, UserCheck, LogOut, Download, Upload, Trash2, ArrowLeft, ShieldCheck } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 
 export default function SettingsPage() {
-  const { tasks, user, signOut, notificationPermission, requestPermission } = useTasks();
+  const { tasks, user, signOut, notificationPermission, requestPermission, addTask } = useTasks();
   const { theme, setTheme } = useTheme();
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
 
   // Export JSON Backup
   const handleExportData = () => {
@@ -25,6 +26,43 @@ export default function SettingsPage() {
     downloadAnchor.click();
     downloadAnchor.remove();
     toast.success('Đã xuất tập tin sao lưu JSON thành công!');
+  };
+
+  // Import JSON Backup File
+  const handleImportFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      try {
+        const content = event.target?.result as string;
+        const importedTasks = JSON.parse(content);
+        if (Array.isArray(importedTasks)) {
+          let count = 0;
+          for (const item of importedTasks) {
+            if (item.title) {
+              await addTask({
+                title: item.title,
+                description: item.description || '',
+                status: item.status || 'todo',
+                priority: item.priority || 'medium',
+                dueDate: item.dueDate,
+                project: item.project,
+                tags: item.tags,
+              });
+              count++;
+            }
+          }
+          toast.success(`Khôi phục thành công ${count} task từ tập tin sao lưu!`);
+        } else {
+          toast.error('Định dạng tập tin JSON không hợp lệ.');
+        }
+      } catch (err) {
+        toast.error('Lỗi đọc tập tin JSON.');
+      }
+    };
+    reader.readAsText(file);
   };
 
   // Clear Local Cache
@@ -47,6 +85,7 @@ export default function SettingsPage() {
         requestPermission={requestPermission}
         user={user}
         signOut={signOut}
+        onOpenAuth={() => setIsAuthOpen(true)}
       />
 
       <main className="relative z-10 mx-auto w-full max-w-4xl flex-1 space-y-6 px-4 py-6 pb-24 sm:pb-8 sm:px-6">
@@ -60,7 +99,7 @@ export default function SettingsPage() {
           </Link>
           <div>
             <h1 className="text-foreground text-2xl font-bold tracking-tight">⚙️ Cài đặt &amp; Tùy chỉnh</h1>
-            <p className="text-muted-foreground text-xs">Quản lý giao diện, tài khoản và dữ liệu ứng dụng</p>
+            <p className="text-muted-foreground text-xs">Quản lý giao diện, tài khoản và sao lưu dữ liệu</p>
           </div>
         </div>
 
@@ -94,11 +133,12 @@ export default function SettingsPage() {
                 <div className="font-bold text-sm text-foreground">Chưa đăng nhập</div>
                 <div className="text-xs text-muted-foreground">Đăng nhập để đồng bộ task trên mọi thiết bị</div>
               </div>
-              <Link href="/">
-                <Button className="rounded-xl bg-indigo-600 text-white text-xs font-semibold">
-                  Đăng nhập / Đồng bộ
-                </Button>
-              </Link>
+              <Button
+                onClick={() => setIsAuthOpen(true)}
+                className="rounded-xl bg-indigo-600 text-white text-xs font-semibold"
+              >
+                Đăng nhập / Đồng bộ
+              </Button>
             </div>
           )}
         </div>
@@ -151,16 +191,22 @@ export default function SettingsPage() {
         {/* Data Backup & Export */}
         <div className="glass-card rounded-3xl p-6 shadow-2xl backdrop-blur-3xl space-y-4">
           <h2 className="text-foreground text-base font-bold flex items-center gap-2">
-            <Download className="h-5 w-5 text-emerald-500" /> Sao lưu &amp; Dữ liệu
+            <Download className="h-5 w-5 text-emerald-500" /> Sao lưu &amp; Phục hồi Dữ liệu
           </h2>
 
-          <div className="flex flex-col sm:flex-row gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <Button
               onClick={handleExportData}
-              className="flex-1 rounded-2xl bg-emerald-600 text-white font-semibold text-xs py-3"
+              className="rounded-2xl bg-emerald-600 text-white font-semibold text-xs py-3"
             >
-              <Download className="mr-2 h-4 w-4" /> Xuất tập tin Sao lưu JSON ({tasks.length} tasks)
+              <Download className="mr-2 h-4 w-4" /> Xuất tập tin JSON ({tasks.length})
             </Button>
+
+            <label className="flex items-center justify-center cursor-pointer rounded-2xl bg-indigo-600 text-white font-semibold text-xs py-3 px-4 shadow-md hover:bg-indigo-700 transition-all">
+              <Upload className="mr-2 h-4 w-4" /> Nhập tập tin JSON
+              <input type="file" accept=".json" onChange={handleImportFile} className="hidden" />
+            </label>
+
             <Button
               variant="ghost"
               onClick={handleClearCache}
@@ -172,6 +218,7 @@ export default function SettingsPage() {
         </div>
       </main>
 
+      <AuthDialog open={isAuthOpen} onOpenChange={setIsAuthOpen} />
       <MobileBottomNav user={user} />
     </div>
   );

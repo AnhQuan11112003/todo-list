@@ -21,7 +21,8 @@ export function Header({
   onOpenAuth,
 }: HeaderProps) {
   return (
-    <header className="sticky top-0 z-30 border-b border-white/40 bg-white/40 backdrop-blur-2xl dark:border-white/10 dark:bg-slate-950/40">
+    <header className="sticky top-0 z-50 border-b border-white/40 bg-white/70 backdrop-blur-2xl shadow-sm dark:border-white/10 dark:bg-slate-950/70">
+
       <div className="mx-auto flex h-14 sm:h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Left Balance Spacer / Desktop Auth */}
         <div className="flex w-10 sm:w-28 shrink-0 items-center justify-start">
